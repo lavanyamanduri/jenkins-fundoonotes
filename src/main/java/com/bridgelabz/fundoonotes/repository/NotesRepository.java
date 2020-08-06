@@ -67,4 +67,5 @@ public interface NotesRepository extends JpaRepository<Notes, Long> {
 	@Query(value = "select * from notes where archiev_note = true AND uesr_id=? ", nativeQuery = true)
 	List<Notes> selectArchieve(Long id);
 
+
 }

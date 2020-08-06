@@ -12,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.bridgelabz.fundoonotes.configuration.RabbitMqProducer;
+import com.bridgelabz.fundoonotes.dto.JwtService;
+import com.bridgelabz.fundoonotes.dto.JwtService.Token;
 import com.bridgelabz.fundoonotes.dto.LoginDetails;
 import com.bridgelabz.fundoonotes.dto.MailDto;
 import com.bridgelabz.fundoonotes.dto.ResetPassword;
@@ -42,8 +44,8 @@ public class UserServImpl implements UserServ {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-	@Autowired
-	private RabbitMqProducer sendMail;
+//	@Autowired
+//	private RabbitMqProducer sendMail;
 
 	@Autowired
 	private JwtUtil jwt;
@@ -63,14 +65,14 @@ public class UserServImpl implements UserServ {
 			userdetails.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 			userRepo.saveData(userdetails.getFirstName(), userdetails.getLastName(), userdetails.getUserMail(),
 					userdetails.getPassword(), userdetails.getMobileNumber(), date);
-			mailDto.setEmail(userdetails.getUserMail());
-			mailDto.setSubject("sendig by fundoo app admin click below link to verify");
-			mailDto.setResponse("http://localhost:8082/checking/" + jwt.jwtGenerateToken(userdetails.getUserMail()));
-			sendMail.produceMsg(mailDto);
+//			mailDto.setEmail(userdetails.getUserMail());
+//			mailDto.setSubject("sendig by fundoo app admin click below link to verify");
+//			mailDto.setResponse("http://localhost:8082/checking/" + jwt.jwtGenerateToken(userdetails.getUserMail()));
+//			sendMail.produceMsg(mailDto);
 			System.out.println(mailDto);
 			log.info("registered user details is" + userdetails);
 			return userdetails;
-		} else {	
+		} else {
 			return null;
 		}
 	}
@@ -151,7 +153,7 @@ public class UserServImpl implements UserServ {
 				mailDto.setEmail(userMail.getUserMail());
 				mailDto.setSubject("sending by admin");
 				mailDto.setResponse("http://localhost:8082/updatePassword/" + jwt.jwtGenerateToken(email));
-				System.out.println(mailDto);
+		//		sendMail.produceMsg(mailDto);
 				return userdetails;
 			}
 		} else {

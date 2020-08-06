@@ -26,9 +26,6 @@ public interface UserRepository extends JpaRepository<UserDetails, Long> {
 	@Query(value = "select * from user where Id=?", nativeQuery = true)
 	UserDetails findById(String id);
 
-	@Query(value = "select id from user where user_mail=?", nativeQuery = true)
-	UserDetails findByUserId(String id);
-	
 	@Modifying
 	@Query(value = "insert into user(first_name,last_name,user_mail,password,mobile_number,created_time)"
 			+ " values(?,?,?,?,?,?)", nativeQuery = true)

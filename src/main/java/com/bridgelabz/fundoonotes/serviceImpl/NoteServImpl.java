@@ -19,9 +19,12 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import com.amazonaws.services.cognitoidp.model.UserNotFoundException;
+import com.bridgelabz.fundoonotes.dto.JwtService;
 import com.bridgelabz.fundoonotes.dto.NotesDto;
 import com.bridgelabz.fundoonotes.dto.RemindDto;
 import com.bridgelabz.fundoonotes.exception.NoteIdNotFoundException;
+import com.bridgelabz.fundoonotes.exception.UserException;
 import com.bridgelabz.fundoonotes.model.Notes;
 import com.bridgelabz.fundoonotes.model.UserDetails;
 import com.bridgelabz.fundoonotes.repository.NotesRepository;
@@ -45,7 +48,6 @@ public class NoteServImpl implements NoteService {
 
 	@Autowired
 	private JwtUtil jwt;
-
 	
 	@Autowired
 	private ElasticSearchService elasticSearchService;
@@ -60,29 +62,28 @@ public class NoteServImpl implements NoteService {
 	/* Method for Adding the Notes */
 	
 	@SuppressWarnings("unused")
-//	@Cacheable(value = "note", key = "#result.getNoteId()", condition = "#result!=null")
+	@Cacheable(value = "note", key = "#result.getNoteId()", condition = "#result!=null")
 	@Override
 	public Notes addNotes(NotesDto notes, String token) {
 		String tokenDetail = jwt.parse(token);
 		System.out.println(tokenDetail);
 	 user = userRepo.findById(tokenDetail);
-	 System.out.println(user);
 //	System.out.println("creating the notes for " + user.getUserMail());
-		
-		//System.out.println(ids);
+		Long ids = user.getId();
+		System.out.println(ids);
 		if (user != null) {
 			System.out.println("########");
 			BeanUtils.copyProperties(notes, noteModel);
 			noteModel.setPin(false);
 			noteModel.setTitle(notes.getNoteTitle());
 			noteModel.setContent(notes.getContent());
-		//	noteModel.setCreatedAt(LocalDateTime.now());
 			noteModel.setUser(user);
 		//	notesRepository.insertNotes(noteModel.getTitle(), noteModel.getContent(), dateTime, ids);
 			notesRepository.save(noteModel);
 			return noteModel;
 		}
-		return null;
+		throw new UserException("User not exists ");
+		
 
 	}
 	/* Method generating for Changing Color */
@@ -114,7 +115,7 @@ public class NoteServImpl implements NoteService {
 			notesRepository.updatePin(true, noteId, id);
 			return 0;
 		} else {
-			return -1;
+			throw new UserException("user not exists");
 		}
 	}
 
@@ -134,7 +135,7 @@ public class NoteServImpl implements NoteService {
 			notesRepository.updateArchieve(true, noteId, id);
 			return 0;
 		}
-		return -1;
+		throw new UserException("user not exists");
 	}
 	
 	/* Method for generating Notes Updation */
@@ -154,7 +155,7 @@ public class NoteServImpl implements NoteService {
 			elasticSearchService.updateById(elasticId, note);
 			return noteId;
 		}
-		return null;
+		throw new UserException("user not exists");
 	}
 	
 	/* Method for Trash */
@@ -174,7 +175,7 @@ public class NoteServImpl implements NoteService {
 			notesRepository.updateTrash(true, noteId, id);
 			return 0;
 		}
-		return -1;
+		throw new UserException("user not exists");
 	}
 	
 	/* Method for deleting the notes permanently */
@@ -193,9 +194,9 @@ public class NoteServImpl implements NoteService {
 				elasticSearchService.deleteById(elasticId);
 				return noteId;
 			}
-			return null;
+			throw new UserException("note not found");
 		}
-		return null;
+		throw new UserException("user not exists");
 	}
 
 	/* Method for generating the remainder */
@@ -212,7 +213,7 @@ public class NoteServImpl implements NoteService {
 			notesRepository.updateRemind(note.getRemindAt(), note.getRemind(), noteId, id);
 			return note;
 		}
-		return null;
+		throw new UserException("note not found");
 	}
 	
 	/* Method for generating the list of notes */
@@ -225,7 +226,7 @@ public class NoteServImpl implements NoteService {
 			Long id = user.getId();
 			return notesRepository.getAllNotes(id);
 		}
-		return null;
+		throw new UserException("user not found");
 	}
 	
 	/* Method for Notes Sorting by name */
@@ -240,7 +241,7 @@ public class NoteServImpl implements NoteService {
 			notes.stream().map(note -> note.getTitle()).collect(Collectors.toList());
 			return notes;
 		}
-		return null;
+		throw new UserException("user not exists");
 	}
 	
 	/* Method generating for notes using SortByDate */
@@ -252,11 +253,11 @@ public class NoteServImpl implements NoteService {
 		if (user != null) {
 			Long id = user.getId();
 			List<Notes> notes = notesRepository.getAllNotes(id);
-			
+
 //			return notes.stream().map(note -> note.getCreatedAt()).sorted(Comparator.reverseOrder())
 //					.collect(Collectors.toList());
 		}
-		return null;
+		throw new UserException("user not exists");
 	}
 	
 	/* Method for listing the Archive Notes */
@@ -268,7 +269,7 @@ public class NoteServImpl implements NoteService {
 			Long id = user.getId();
 			return notesRepository.selectArchieve(id);
 		}
-		return null;
+		throw new UserException("user not exists");
 	}
 	
 	/* Method for generating the NotesById */
@@ -288,5 +289,4 @@ public class NoteServImpl implements NoteService {
 		}
 	
 	}
-
 }
