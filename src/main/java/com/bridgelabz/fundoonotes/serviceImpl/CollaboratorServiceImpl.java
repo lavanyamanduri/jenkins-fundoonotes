@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.bridgelabz.fundoonotes.exception.UserException;
 import com.bridgelabz.fundoonotes.model.Collaborator;
 import com.bridgelabz.fundoonotes.model.Notes;
 import com.bridgelabz.fundoonotes.repository.CollaboratorRepository;
@@ -39,7 +40,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
     		return collaboratorModel;
     	 }
      }
-		return null;
+     throw new UserException("User not found ");
 	}
 
 	/* Method generating to delete the data */
@@ -63,8 +64,8 @@ public class CollaboratorServiceImpl implements CollaboratorService {
        if(notes!=null) {
     	   return collaboRepo.getAllCollaborators(noteId);
        }
-		return null;
-	}
+       throw new UserException("User not found ");
+      }
 
 	
 }

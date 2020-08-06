@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.bridgelabz.fundoonotes.dto.LabelDto;
 import com.bridgelabz.fundoonotes.exception.LabelNameAlreadyExistsException;
+import com.bridgelabz.fundoonotes.exception.UserException;
 import com.bridgelabz.fundoonotes.model.Label;
 import com.bridgelabz.fundoonotes.model.Notes;
 import com.bridgelabz.fundoonotes.model.UserDetails;
@@ -62,7 +63,7 @@ public class LabelServImpl implements LabelService {
 		} catch (Exception e) {
 			log.error("error " + e.getMessage() + " occured while creating the label");
 		}
-		return null;
+		throw new UserException("User not exists ");
 	}
 
 	@CachePut(value = "label", key = "#id", condition = "#result!=null")
@@ -82,7 +83,7 @@ public class LabelServImpl implements LabelService {
 				}
 			}
 		}
-		return null;
+		throw new UserException("User not exists ");
 	}
 
 	@SuppressWarnings("unused")
@@ -103,7 +104,7 @@ public class LabelServImpl implements LabelService {
 			}
 			return labelId;
 		}
-		return null;
+		throw new UserException("User not exists ");
 	}
 
 	@Override
@@ -135,7 +136,7 @@ public class LabelServImpl implements LabelService {
 				}
 			}
 		}
-		return null;
+		throw new UserException("User not exists ");
 	}
 
 	@Override
@@ -147,7 +148,7 @@ public class LabelServImpl implements LabelService {
 			Long userId = user.getId();
 			return labelRepo.getAllLabels(userId);
 		}
-		return null;
+		throw new UserException("User not exists ");
 	}
 
 }

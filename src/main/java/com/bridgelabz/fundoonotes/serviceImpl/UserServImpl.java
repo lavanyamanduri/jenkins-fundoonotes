@@ -19,6 +19,7 @@ import com.bridgelabz.fundoonotes.dto.MailDto;
 import com.bridgelabz.fundoonotes.dto.ResetPassword;
 import com.bridgelabz.fundoonotes.dto.UserDto;
 import com.bridgelabz.fundoonotes.exception.EmailAlreadyExists;
+import com.bridgelabz.fundoonotes.exception.UserException;
 import com.bridgelabz.fundoonotes.exception.UserNotVerifiedException;
 import com.bridgelabz.fundoonotes.model.UserDetails;
 import com.bridgelabz.fundoonotes.repository.UserRepository;
@@ -139,7 +140,7 @@ public class UserServImpl implements UserServ {
 		} catch (Exception e) {
 			log.error("error " + e.getMessage() + " occured while verifying the mail");
 		}
-		return null;
+		throw new UserException("User not exists ");
 	}
 	
 	/* Method for Forgot Password */
@@ -159,7 +160,7 @@ public class UserServImpl implements UserServ {
 		} else {
 			log.error("check the mail once for forget password");
 		}
-		return null;
+		throw new UserException("User not exists ");
 	}
 
 	/* Method for Updating the Password */

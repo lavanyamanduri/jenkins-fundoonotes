@@ -9,6 +9,13 @@ public class Responses {
 	private String message;
 	private int statusCode;
 	private Object details;
+	
+
+	public Responses(String message, Object details) {
+		super();
+		this.message = message;
+		this.details = details;
+	}
 
 	public Responses(String message, int statusCode) {
 		super();

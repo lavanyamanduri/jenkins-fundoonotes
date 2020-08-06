@@ -31,6 +31,7 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController
 public class NotesController {
+	
 	@Autowired
 	private NoteService noteService;
 	
@@ -40,10 +41,9 @@ public class NotesController {
 	@ApiOperation(value = "Creation of note")
 	public ResponseEntity<Responses> createNote(@RequestBody NotesDto note, @RequestHeader("token") String token) {
 		Notes result = noteService.addNotes(note, token);
-		if (result != null) {
-			return ResponseEntity.status(HttpStatus.ACCEPTED).body(new Responses("successfully added"+result, 200));
-		}
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Responses("not added", 400));
+		
+			return ResponseEntity.status(HttpStatus.OK).body(new Responses("successfully added",result));
+		
 	}
 	
 	/* API for Color Changing */
@@ -53,11 +53,9 @@ public class NotesController {
 	public ResponseEntity<Responses> changingColor(@RequestParam String color, @RequestParam Long noteId,
 			@PathVariable("token") String token) {
 		boolean result = noteService.changeColor(color, noteId, token);
-		if (result) {
-			return ResponseEntity.status(HttpStatus.ACCEPTED)
-					.body(new Responses("successfully changed the color", 200));
-		}
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Responses("something went wrong..", 400));
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new Responses("successfully changed the color", result));
+		
 	}
 
 	/* API for Pin And To UnPin */
@@ -76,7 +74,7 @@ public class NotesController {
 	
 	/*  API for Archive or UnArchive */
 	
-	@PutMapping("note/archive-or-unarchive/{token}")
+	@PutMapping("/note/archive-or-unarchive/{token}")
 	@ApiOperation(value = "Archive or UnArchive a note")
 	public ResponseEntity<Responses> chageArchieving(@RequestParam Long noteId, @PathVariable("token") String token) {
 		int result = noteService.archievingStatus(noteId, token);
